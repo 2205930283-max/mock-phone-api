@@ -1,3 +1,5 @@
+import os
+from fastapi import HTTPException
 from fastapi import FastAPI, Query
 import hashlib
 import random
