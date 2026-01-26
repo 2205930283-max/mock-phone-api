@@ -12,7 +12,7 @@ app = FastAPI(
     version="1.0"
 )
 # ===== 接口总开关 =====
-API_ENABLED = os.getenv("API_ENABLED", "true").lower() == "API_ENABLED"
+API_ENABLED = os.getenv("API_ENABLED", "true").lower() == "true"
 
 # =============================
 # 固定手机号规则
