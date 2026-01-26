@@ -1,15 +1,17 @@
 import os
-from fastapi import HTTPException
-from fastapi import FastAPI, Query
 import hashlib
 import random
+from fastapi import FastAPI, Query, HTTPException
 
 app = FastAPI(
     title="Mock Phone API",
     description="All data are mock / fake, for testing only",
     version="1.0"
 )
-# ===== 接口总开关 =====
+
+# =============================
+# 接口总开关（环境变量）
+# =============================
 API_ENABLED = os.getenv("API_ENABLED", "true").lower() == "true"
 
 # =============================
@@ -74,9 +76,8 @@ PHONE_PROVINCE = {
 }
 
 # =============================
-# 👇 夸张姓名库（组合式，6万+）
+# 姓名库
 # =============================
-
 FAMILY_NAMES = [
     "赵","钱","孙","李","周","吴","郑","王","冯","陈",
     "褚","卫","蒋","沈","韩","杨","朱","秦","尤","许",
@@ -99,21 +100,24 @@ GIVEN_NAME_PART2 = [
 ]
 
 # =============================
-# 工具函数
+# 工具函数：稳定随机种子
 # =============================
 def stable_seed(text: str) -> int:
     return int(hashlib.md5(text.encode()).hexdigest()[:8], 16)
 
 # =============================
-# 接口
+# 查询接口
 # =============================
 @app.get("/query")
 def query(phone: str = Query(..., description="手机号")):
-        if not API_ENABLED:
+
+    # 接口总开关
+    if not API_ENABLED:
         raise HTTPException(
             status_code=403,
             detail="API is disabled"
         )
+
     # 固定规则优先
     if phone in FIXED_RULES:
         rule = FIXED_RULES[phone]
@@ -125,18 +129,21 @@ def query(phone: str = Query(..., description="手机号")):
             "mock": True
         }
 
+    # 省份 & 身份证前缀
     prefix = phone[:3]
     province, province_code = PHONE_PROVINCE.get(prefix, ("未知", "99"))
 
+    # 稳定随机
     random.seed(stable_seed(phone))
 
+    # 生成姓名
     name = (
         random.choice(FAMILY_NAMES)
         + random.choice(GIVEN_NAME_PART1)
         + random.choice(GIVEN_NAME_PART2)
     )
 
-    # mock 身份证（省份码 + 随机生日 + 顺序码）
+    # mock 身份证
     idcard = (
         province_code
         + province_code
