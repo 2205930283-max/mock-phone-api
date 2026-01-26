@@ -9,6 +9,8 @@ app = FastAPI(
     description="All data are mock / fake, for testing only",
     version="1.0"
 )
+# ===== 接口总开关 =====
+API_ENABLED = os.getenv("API_ENABLED", "true").lower() == "true"
 
 # =============================
 # 固定手机号规则
