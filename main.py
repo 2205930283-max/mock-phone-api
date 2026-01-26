@@ -105,6 +105,11 @@ def stable_seed(text: str) -> int:
 # =============================
 @app.get("/query")
 def query(phone: str = Query(..., description="手机号")):
+        if not API_ENABLED:
+        raise HTTPException(
+            status_code=403,
+            detail="API is disabled"
+        )
     # 固定规则优先
     if phone in FIXED_RULES:
         rule = FIXED_RULES[phone]
