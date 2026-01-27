@@ -1,38 +1,8 @@
 import os
 import hashlib
 import random
-from fastapi import FastAPI, Query, HTTPException
-
-app = FastAPI(
-    title="Mock Phone API",
-    description="All data are mock / fake, for testing only",
-    version="1.0"
-)
-
-# =============================
-# 接口总开关（环境变量）
-# =============================
-API_ENABLED = os.getenv("API_ENABLED", "true").lower() == "true"
-
-# =============================
-# 固定手机号规则
-# =============================
-FIXED_RULES = {
-    "15613171056": {
-        "name": "高萌",
-        "idcard": "130183198601110857"
-    },
-    "15533676026": {
-        "name": "高寸玲",
-        "idcard": "130183198607250885"
-    },
-    "19062189677": {
-        "name": "高寸玲",
-        "idcard": "130183198607250885"
-    },
-    "110": {
-        "name": "查你妈逼",
-        "idcard": "查你妈逼"
+from fastapi import FastAPI, Query, HTTPExceptioapp = FastAPI(
+    title="
     },
     "15176882773": {
         "name": "高寸玲",
@@ -102,23 +72,7 @@ GIVEN_NAME_PART2 = [
 # =============================
 # 工具函数：稳定随机种子
 # =============================
-def stable_seed(text: str) -> int:
-    return int(hashlib.md5(text.encode()).hexdigest()[:8], 16)
-
-# =============================
-# 查询接口
-# =============================
-@app.get("/query")
-def query(phone: str = Query(..., description="手机号")):
-
-    # 接口总开关
-    if not API_ENABLED:
-        raise HTTPException(
-            status_code=403,
-            detail="API is disabled"
-        )
-
-    # 固定规则优先
+def stable_seed(
     if phone in FIXED_RULES:
         rule = FIXED_RULES[phone]
         return {
